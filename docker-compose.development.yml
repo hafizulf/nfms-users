@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres_nfms_user_service:
+    container_name: postgres_nfms_user_service
+    image: postgres:17
+    ports:
+      - "${DB_PORT}:5432"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    volumes:
+      - nfms_user_service_data:/var/lib/postgresql/data
+
+volumes:
+  nfms_user_service_data:
