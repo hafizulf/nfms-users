@@ -1,21 +1,18 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Inject } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { RequestContext } from '@mikro-orm/core';
-import { MikroORM } from '@mikro-orm/core';
+import { lastValueFrom, from } from 'rxjs';
+import { MikroORM, RequestContext } from '@mikro-orm/core';
 
 @Injectable()
 export class MikroOrmContextInterceptor implements NestInterceptor {
   constructor(@Inject(MikroORM) private readonly orm: MikroORM) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    return new Observable((observer) => {
+  intercept(_ctx: ExecutionContext, next: CallHandler) {
+    const promise = new Promise((resolve, reject) => {
       RequestContext.create(this.orm.em, () => {
-        next.handle().subscribe({
-          next: (value) => observer.next(value),
-          error: (err) => observer.error(err),
-          complete: () => observer.complete(),
-        });
+        lastValueFrom(next.handle()).then(resolve, reject);
       });
     });
+
+    return from(promise);
   }
 }

@@ -1,35 +1,27 @@
-import {
-  CallHandler,
-  ExecutionContext,
-  Injectable,
-  NestInterceptor,
-} from '@nestjs/common';
-import { Observable, tap } from 'rxjs';
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } from '@nestjs/common';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Injectable()
 export class GrpcLoggerInterceptor implements NestInterceptor {
+  private readonly logger = new Logger(GrpcLoggerInterceptor.name);
+
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const handler = context.getHandler().name;
-    const className = context.getClass().name;
-    const now = Date.now();
+    const callName = `${context.getClass().name}.${context.getHandler().name}`;
+    const start = Date.now();
 
-    // gRPC context
-    const rpcContext = context.switchToRpc();
-    const data = rpcContext.getData(); // gRPC request payload
+    // Only log for gRPC context
+    if (context.getType() === 'rpc') {
+      const requestData = context.switchToRpc().getData();
+      this.logger.log(`${callName} called with: ${JSON.stringify(requestData)}`);
+    }
 
-    console.log(
-      `[gRPC] ${className}.${handler} called with:`,
-      JSON.stringify(data),
+    return next.handle().pipe(
+      tap(() => {
+        if (context.getType() === 'rpc') {
+          this.logger.log(`${callName} finished in ${Date.now() - start}ms`);
+        }
+      }),
     );
-
-    return next
-      .handle()
-      .pipe(
-        tap(() =>
-          console.log(
-            `[gRPC] ${className}.${handler} finished in ${Date.now() - now}ms`,
-          ),
-        ),
-      );
   }
 }

@@ -3,19 +3,23 @@ import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 @Entity({ tableName: 'users' })
 export class UserOrmEntity {
   @PrimaryKey({ type: 'uuid' })
-  id: string;
+  id!: string;
 
   @Property()
-  name: string;
+  name!: string;
 
   @Property({ unique: true })
-  email: string;
+  email!: string;
 
   @Property({ fieldName: 'password_hash', hidden: true })
-  passwordHash: string;
+  passwordHash!: string;
 
-  @Property({ fieldName: 'created_at', type: 'timestamptz', defaultRaw: 'now()' })
-  createdAt: Date;
+  @Property({ 
+    fieldName: 'created_at', 
+    type: 'timestamptz', 
+    defaultRaw: 'now()' 
+  })
+  createdAt!: Date;
 
   @Property({
     fieldName: 'updated_at',
@@ -23,8 +27,12 @@ export class UserOrmEntity {
     defaultRaw: 'now()',
     onUpdate: () => new Date(),
   })
-  updatedAt: Date;
+  updatedAt!: Date;
 
-  @Property({ fieldName: 'deleted_at', type: 'timestamptz', nullable: true })
-  deletedAt: Date | null;
+  @Property({ 
+    fieldName: 'deleted_at', 
+    type: 'timestamptz', 
+    nullable: true 
+  })
+  deletedAt?: Date | null;
 }
