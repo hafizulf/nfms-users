@@ -13,8 +13,7 @@ export class UserRepositoryMikro {
   ) {}
 
   async findAll(): Promise<UserEntity[]> {
-    const em = this.userRepository.getEntityManager().fork();
-    const ormUsers = await em.find(UserOrmEntity, {});
+    const ormUsers = await this.userRepository.findAll();
     return ormUsers.map((ormUser) => UserMapper.toDomain(ormUser));
   }
 }

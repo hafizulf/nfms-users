@@ -14,7 +14,6 @@ export class UserRpcService {
 
   async findUsers(): Promise<UserResponseDto[]> {
     const users: UserEntity[] = await this.userRepository.findAll();
-    console.log('users', users);
     return users.map((user) => UserMapper.toDto(user));
   }
 }

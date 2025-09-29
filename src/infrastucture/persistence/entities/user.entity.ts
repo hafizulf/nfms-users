@@ -6,7 +6,7 @@ export class UserEntity {
     private _name: string,
     private _email: string,
     passwordHash: string,
-    public readonly createdAt: Date,
+    public _createdAt: Date,
     private _updatedAt: Date,
   ) {
     this._passwordHash = passwordHash;
@@ -37,6 +37,7 @@ export class UserEntity {
   // Getters (expose safely)
   get name() { return this._name; }
   get email() { return this._email; }
+  get createdAt() { return this._createdAt; }
   get updatedAt() { return this._updatedAt; }
 
   // Behavior (enforce invariants + bump updatedAt)

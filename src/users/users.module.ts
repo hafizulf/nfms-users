@@ -7,10 +7,14 @@ import { UserRepositoryMikro } from 'src/infrastucture/persistence/mikro/user-re
 import { UserRpcService } from './application/services/user-rpc.service';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { UserOrmEntity } from 'src/infrastucture/persistence/mikro/user.orm-entity';
+import { UserController } from './interface/user-http.controller';
 
 @Module({
   imports: [MikroOrmModule.forFeature([UserOrmEntity])],
-  controllers: [UserRpcController],
+  controllers: [
+    UserRpcController,
+    UserController,
+  ],
   providers: [
     {
       provide: APP_INTERCEPTOR,
