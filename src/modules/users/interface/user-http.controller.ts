@@ -1,5 +1,6 @@
-import { Controller, Get } from "@nestjs/common";
+import { Body, Controller, Get, Post } from "@nestjs/common";
 import { UserRpcService } from "../application/services/user-rpc.service";
+import { CreateUserRequest, UserResponseDto } from "./dto/user.dto";
 
 @Controller('/users')
 export class UserController {
@@ -17,4 +18,11 @@ export class UserController {
       data,
     };
   }
+
+  // @Post()
+  // async storeUsers(
+  //   @Body() request: CreateUserRequest
+  // ): Promise<UserResponseDto> {
+    
+  // }
 }

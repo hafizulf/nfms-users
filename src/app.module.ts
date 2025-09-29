@@ -4,7 +4,7 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from './modules/users/users.module';
 import { mikroOrmConfig } from './config/mikro-orm.config';
 import { EnvValidationSchema, formatEnvErrors } from './config/env-validation.config';
 import { MikroOrmContextInterceptor } from './interceptors/mikro-orm-context.interceptor';
