@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module, NestModule, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { APP_INTERCEPTOR } from '@nestjs/core';
@@ -8,6 +8,7 @@ import { UsersModule } from './modules/users/users.module';
 import { mikroOrmConfig } from './config/mikro-orm.config';
 import { EnvValidationSchema, formatEnvErrors } from './config/env-validation.config';
 import { MikroOrmContextInterceptor } from './interceptors/mikro-orm-context.interceptor';
+import { LoggerMiddleware } from './middlewares/logger.middleware';
 
 @Module({
   imports: [
@@ -42,4 +43,8 @@ import { MikroOrmContextInterceptor } from './interceptors/mikro-orm-context.int
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
