@@ -7,6 +7,7 @@ import {
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
+import { buildValidationPipe } from './modules/common/validation/build-validation-pipe';
 
 async function bootstrap() {
   // Create main Fastify HTTP app
@@ -20,7 +21,7 @@ async function bootstrap() {
   const grpcUrl = configService.get<string>('GRPC_URL');
 
   // Attach gRPC microservice
-  app.connectMicroservice<MicroserviceOptions>({
+  const grpc = app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
     options: {
       package: 'user',
@@ -28,6 +29,10 @@ async function bootstrap() {
       url: grpcUrl,
     },
   });
+
+  // Apply global validation pipe to HTTP and gRPC
+  app.useGlobalPipes(buildValidationPipe('http'));
+  grpc.useGlobalPipes(buildValidationPipe('rpc'));
 
   // Start both HTTP + Microservice
   await app.startAllMicroservices();

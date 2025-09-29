@@ -8,6 +8,7 @@ import { UserRpcService } from './application/services/user-rpc.service';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { UserOrmEntity } from 'src/infrastucture/persistence/mikro/user.orm-entity';
 import { UserController } from './interface/user-http.controller';
+import { UserService } from './application/services/user.service';
 
 @Module({
   imports: [MikroOrmModule.forFeature([UserOrmEntity])],
@@ -25,6 +26,7 @@ import { UserController } from './interface/user-http.controller';
       useClass: UserRepositoryMikro,
     },
     UserRpcService,
+    UserService,
   ],
 })
 export class UsersModule {}
