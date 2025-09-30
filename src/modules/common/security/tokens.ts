@@ -1,0 +1,3 @@
+export const SECURITY_TOKENS = {
+  PASSWORD_HASHER: 'PASSWORD_HASHER',
+} as const;

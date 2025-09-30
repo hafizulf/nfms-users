@@ -9,9 +9,16 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { UserOrmEntity } from 'src/modules/users/infrastucture/persistence/mikro/user.orm-entity';
 import { UserController } from './interface/user-http.controller';
 import { UserService } from './application/services/user.service';
+import { UserHandlers } from './application/handlers';
+import { CqrsModule } from '@nestjs/cqrs';
+import { SecurityModule } from '../common/security/security.module';
 
 @Module({
-  imports: [MikroOrmModule.forFeature([UserOrmEntity])],
+  imports: [
+    MikroOrmModule.forFeature([UserOrmEntity]),
+    SecurityModule,
+    CqrsModule,
+  ],
   controllers: [
     UserRpcController,
     UserController,
@@ -25,6 +32,7 @@ import { UserService } from './application/services/user.service';
       provide: REPOSITORY_TYPES.UserRepository,
       useClass: UserRepositoryMikro,
     },
+    ...UserHandlers,
     UserRpcService,
     UserService,
   ],

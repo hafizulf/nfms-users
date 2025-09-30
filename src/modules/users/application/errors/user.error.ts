@@ -1,0 +1,9 @@
+import { HttpStatus } from "@nestjs/common";
+import { AppError } from "src/modules/common/errors/app-error";
+import { ERROR_CODES } from "src/modules/common/errors/error-codes";
+
+export class UserEmailTakenError extends AppError {
+  constructor(email: string) {
+    super(ERROR_CODES.USER_EMAIL_TAKEN, `Email already taken: ${email}`, HttpStatus.CONFLICT);
+  }
+}

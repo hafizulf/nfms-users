@@ -6,7 +6,7 @@ export class UserEntity {
     private _name: string,
     private _email: string,
     passwordHash: string,
-    public _createdAt: Date,
+    private _createdAt: Date,
     private _updatedAt: Date,
   ) {
     this._passwordHash = passwordHash;

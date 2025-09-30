@@ -25,14 +25,14 @@ export class UserController {
   @Post()
   async storeUsers(
     @Body() request: CreateUserRequest
-  // ): Promise<StandardResponseDto<UserResponseDto>> {
-  ): Promise<any> {
+  ): Promise<StandardResponseDto<UserResponseDto>> {
 
     const data = await this._userService.createUser(request);
     
     return {
       statusCode: 201,
       message: 'User created successfully',
+      data,
     }
   }
 }

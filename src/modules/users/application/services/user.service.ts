@@ -1,23 +1,22 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { UserRepository } from "src/modules/users/infrastucture/persistence/repositories/user-repository.interface";
-import { REPOSITORY_TYPES } from "src/modules/users/infrastucture/persistence/repositories/user-repository.types";
-import { CreateUserRequest } from "../../interface/dto/user.dto";
+import { Injectable } from "@nestjs/common";
+import { CreateUserRequest, UserResponseDto } from "../../interface/dto/user.dto";
+import { CommandBus } from "@nestjs/cqrs";
+import { CreateUserCommand } from "../command/create-user.command";
+import { UserViewMapper } from "../../interface/mapper/user-view.mapper";
 
 @Injectable()
 export class UserService {
   constructor(
-    @Inject(REPOSITORY_TYPES.UserRepository)
-    private readonly userRepository: UserRepository,
+    private readonly commandBus: CommandBus,
   ) {}
 
   async createUser(
-    params: CreateUserRequest,
-  ): Promise<any> {
-    console.log("params...", params);
+    body: CreateUserRequest,
+  ): Promise<UserResponseDto> {
+    const createdUser = await this.commandBus.execute(
+      new CreateUserCommand(body),
+    );
 
-    return {
-      statusCode: 200,
-      message: 'User created successfully',
-    };
+    return UserViewMapper.toResponseDto(createdUser);
   }
 }
