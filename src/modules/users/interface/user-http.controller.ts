@@ -13,7 +13,7 @@ export class UserController {
 
   @Get()
   async findUsers(): Promise<StandardResponseDto<UserResponseDto[]>> {
-    const data = await this._userRpcService.findUsers();
+    const data = await this._userRpcService.findUsers({});
 
     return {
       statusCode: 200,

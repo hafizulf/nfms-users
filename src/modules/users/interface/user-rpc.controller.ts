@@ -11,8 +11,8 @@ export class UserRpcController {
   constructor(private readonly userRpcService: UserRpcService) {}
 
   @GrpcMethod('UserService', 'FindUsers')
-  async findUsers(_data: FindUsersRequest): Promise<FindUsersResponse> {
-    const users = await this.userRpcService.findUsers();
+  async findUsers(request: FindUsersRequest): Promise<FindUsersResponse> {
+    const users = await this.userRpcService.findUsers(request);
     return { users };
   }
 }
