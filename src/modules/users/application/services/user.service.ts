@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { UserRepository } from "src/infrastucture/persistence/repositories/user-repository.interface";
-import { REPOSITORY_TYPES } from "src/infrastucture/persistence/repositories/user-repository.types";
+import { UserRepository } from "src/modules/users/infrastucture/persistence/repositories/user-repository.interface";
+import { REPOSITORY_TYPES } from "src/modules/users/infrastucture/persistence/repositories/user-repository.types";
 import { CreateUserRequest } from "../../interface/dto/user.dto";
 
 @Injectable()

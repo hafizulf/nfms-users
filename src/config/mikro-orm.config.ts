@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { defineConfig, Options } from '@mikro-orm/core';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { Migrator } from '@mikro-orm/migrations';
-import { UserOrmEntity } from '../infrastucture/persistence/mikro/user.orm-entity';
+import { UserOrmEntity } from '../modules/users/infrastucture/persistence/mikro/user.orm-entity';
 
 // Used by NestJS runtime (forRootAsync)
 export function mikroOrmConfig(config: ConfigService): Options<PostgreSqlDriver> {
