@@ -1,5 +1,11 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, Filter, PrimaryKey, Property } from '@mikro-orm/core';
 
+@Entity()
+@Filter({
+  name: 'softDeleted',
+  cond: () => ({ deletedAt: null }),
+  default: true,
+})
 @Entity({ tableName: 'users' })
 export class UserOrmEntity {
   @PrimaryKey({ type: 'uuid' })

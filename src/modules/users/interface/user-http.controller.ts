@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
 import { UserRpcService } from "../application/services/user-rpc.service";
 import { CreateUserRequest, FindOneUserRequest, UpdateUserRequest, UserResponseDto } from "./dto/user.dto";
 import { StandardResponseDto } from "../../common/dto/standard-response.dto";
@@ -61,5 +61,17 @@ export class UserHttpController {
       message: 'User updated successfully',
       data,
     }
+  }
+
+  @Delete(":id")
+  async deleteUser(
+    @Param() params: FindOneUserRequest,
+  ): Promise<StandardResponseDto<boolean>> {
+    await this._userService.deleteUser(params);
+    
+    return {
+      statusCode: 200,
+      message: 'User deleted successfully',
+    } 
   }
 }

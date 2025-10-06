@@ -5,4 +5,5 @@ export abstract class UserRepository {
   abstract save(user: UserEntity): Promise<UserEntity>;
   abstract findById(id: string): Promise<UserEntity | null>;
   abstract update(id: string, user: Partial<UserEntity>): Promise<UserEntity | null>;
+  abstract softDelete(id: string): Promise<boolean>;
 }

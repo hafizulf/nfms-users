@@ -26,6 +26,11 @@ export function mikroOrmConfig(config: ConfigService): Options<PostgreSqlDriver>
       disableForeignKeys: false, // Ensures foreign keys are handled correctly
     },
     extensions: [Migrator],
+    filters: {
+      softDeleted: {
+        cond: () => ({ deletedAt: null }),
+      },
+    },
   };
 }
 
@@ -48,4 +53,9 @@ export default defineConfig({
     disableForeignKeys: false,
   },
   extensions: [Migrator],
+  filters: {
+    softDeleted: {
+      cond: () => ({ deletedAt: null }),
+    },
+  },
 });

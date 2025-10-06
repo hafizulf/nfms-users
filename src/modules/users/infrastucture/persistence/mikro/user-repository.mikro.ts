@@ -4,17 +4,18 @@ import { Injectable } from '@nestjs/common';
 import { UserOrmEntity } from './user.orm-entity';
 import { UserEntity } from '../entities/user.entity';
 import { UserMapper } from '../entities/user.mapper';
-import { UserEmailTakenError } from 'src/modules/users/application/errors/user.error';
+import { UserEmailTakenError, UserHasDependenciesError } from 'src/modules/users/application/errors/user.error';
+import { UserRepository } from '../repositories/user-repository.interface';
 
 @Injectable()
-export class UserRepositoryMikro {
+export class UserRepositoryMikro implements UserRepository {
   constructor(
     @InjectRepository(UserOrmEntity)
     private readonly userRepository: EntityRepository<UserOrmEntity>,
   ) {}
 
   async findAll(): Promise<UserEntity[]> {
-    const ormUsers = await this.userRepository.findAll();
+    const ormUsers = await this.userRepository.findAll({ filters: { softDeleted: true } });
     return ormUsers.map((ormUser) => UserMapper.toDomain(ormUser));
   }
 
@@ -34,7 +35,7 @@ export class UserRepositoryMikro {
   }
 
   async findById(id: string): Promise<UserEntity | null> {
-    const ormUser = await this.userRepository.findOne({ id });
+    const ormUser = await this.userRepository.findOne({ id }, { filters: { softDeleted: true } });
     return ormUser ? UserMapper.toDomain(ormUser) : null;
   }
 
@@ -43,7 +44,7 @@ export class UserRepositoryMikro {
 
     try {
       await this.userRepository.getEntityManager().transactional(async (em) => {
-        const ormUser = await em.findOne(UserOrmEntity, { id });
+        const ormUser = await em.findOne(UserOrmEntity, { id }, { filters: { softDeleted: true } });
         if (!ormUser) {
           return;
         }
@@ -73,5 +74,31 @@ export class UserRepositoryMikro {
     }
 
     return UserMapper.toDomain(updatedOrm);
+  }
+
+  async softDelete(id: string): Promise<boolean> {
+    let deleted = false;
+
+    try {
+      await this.userRepository.getEntityManager().transactional(async (em) => {
+        const ormUser = await em.findOne(UserOrmEntity, { id }, { filters: { softDeleted: true } });
+        if (!ormUser) {
+          return;
+        }
+        
+        ormUser.deletedAt = new Date();
+        em.persist(ormUser);
+        await em.flush();
+
+        deleted = true;
+      });
+    } catch (e: unknown) {
+      if ((e as any)?.code === '23503') {
+        throw new UserHasDependenciesError(id);
+      }
+      throw e;
+    }
+
+    return deleted;
   }
 }

@@ -13,3 +13,9 @@ export class UserNotFoundError extends AppError {
     super(ERROR_CODES.USER_NOT_FOUND, `User not found: ${id}`, HttpStatus.NOT_FOUND);
   }
 }
+
+export class UserHasDependenciesError extends AppError {
+  constructor(id: string) {
+    super(ERROR_CODES.USER_HAS_DEPENDENCIES, `User has dependencies: ${id}`, HttpStatus.CONFLICT);
+  }
+}

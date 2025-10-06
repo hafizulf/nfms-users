@@ -1,4 +1,5 @@
 import { CreateUserHandler } from "./create-user.handler";
+import { DeleteUserHandler } from "./delete-user.handler";
 import { FindOneUserHandler } from "./find-one-user.handler";
 import { FindUsersHandler } from "./find-users.handler";
 import { UpdateUserHandler } from "./update-user.handler";
@@ -8,4 +9,5 @@ export const UserHandlers = [
   FindUsersHandler,
   FindOneUserHandler,
   UpdateUserHandler,
+  DeleteUserHandler,
 ];
