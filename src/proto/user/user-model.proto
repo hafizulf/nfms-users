@@ -13,3 +13,7 @@ message UserPublic {
 message FindUsersResponse {
   repeated UserPublic users = 1;
 }
+
+message FindOneUserResponse {
+  UserPublic user = 1;
+}

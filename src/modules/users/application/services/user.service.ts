@@ -1,13 +1,17 @@
 import { Injectable } from "@nestjs/common";
-import { CreateUserRequest, UserResponseDto } from "../../interface/dto/user.dto";
-import { CommandBus } from "@nestjs/cqrs";
+import { CreateUserRequest, FindOneUserRequest, UpdateUserRequest, UserResponseDto } from "../../interface/dto/user.dto";
+import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { CreateUserCommand } from "../command/create-user.command";
 import { UserViewMapper } from "../../interface/mapper/user-view.mapper";
+import { UserNotFoundError } from "../errors/user.error";
+import { FindOneUserQuery } from "../query/find-one-user.query";
+import { UpdateUserCommand } from "../command/update-user.command";
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
 
   async createUser(
@@ -18,5 +22,18 @@ export class UserService {
     );
 
     return UserViewMapper.toResponseDto(createdUser);
+  }
+
+  async updateUser(
+    params: FindOneUserRequest,
+    body: UpdateUserRequest,
+  ): Promise<UserResponseDto> {
+    const updated = await this.commandBus.execute(
+      new UpdateUserCommand({ id: params.id, ...body })
+    );
+
+    if (!updated) throw new UserNotFoundError(params.id);
+
+    return UserViewMapper.toResponseDto(updated);
   }
 }

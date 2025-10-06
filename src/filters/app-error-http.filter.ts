@@ -6,7 +6,7 @@ import { FastifyReply } from 'fastify';
 export class AppErrorHttpFilter implements ExceptionFilter {
   catch(err: AppError, host: ArgumentsHost) {
     const reply = host.switchToHttp().getResponse<FastifyReply>();
-    const status = err.httpStatus;
+    const status = err.httpStatus;``
     
     reply.code(status).send({
       statusCode: status,

@@ -5,7 +5,11 @@ package user;
 import "user-model.proto";
 
 message Empty {}
+message FindOneUserRequest {
+  string id = 1;
+}
 
 service UserService {
   rpc FindUsers(Empty) returns (FindUsersResponse) {}
+  rpc FindOneUser(FindOneUserRequest) returns (FindOneUserResponse) {}
 }

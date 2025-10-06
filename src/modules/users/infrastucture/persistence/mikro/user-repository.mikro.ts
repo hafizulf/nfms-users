@@ -32,4 +32,46 @@ export class UserRepositoryMikro {
 
     return UserMapper.toDomain(orm);
   }
+
+  async findById(id: string): Promise<UserEntity | null> {
+    const ormUser = await this.userRepository.findOne({ id });
+    return ormUser ? UserMapper.toDomain(ormUser) : null;
+  }
+
+  async update(id: string, user: Partial<UserEntity>): Promise<UserEntity | null> {
+    let updatedOrm: UserOrmEntity | null = null;
+
+    try {
+      await this.userRepository.getEntityManager().transactional(async (em) => {
+        const ormUser = await em.findOne(UserOrmEntity, { id });
+        if (!ormUser) {
+          return;
+        }
+
+        const partialOrm = UserMapper.toOrmPartial(user);
+        const safePartial = Object.fromEntries(
+          Object.entries(partialOrm).filter(([_, v]) => v !== null && v !== undefined),
+        );
+
+        Object.assign(ormUser, safePartial);
+
+        // No need for explicit persist if no changes, but safe to do
+        em.persist(ormUser);
+        await em.flush();
+
+        updatedOrm = ormUser;
+      });
+    } catch (e: unknown) {
+      if ((e as any)?.code === '23505') {
+        throw new UserEmailTakenError((user.email as string) || '');
+      }
+      throw e;
+    }
+
+    if (!updatedOrm) {
+      return null;
+    }
+
+    return UserMapper.toDomain(updatedOrm);
+  }
 }

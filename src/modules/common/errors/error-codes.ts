@@ -1,3 +1,4 @@
 export const ERROR_CODES = {
   USER_EMAIL_TAKEN: 'USER.EMAIL_TAKEN',
+  USER_NOT_FOUND: 'USER.NOT_FOUND',
 } as const;

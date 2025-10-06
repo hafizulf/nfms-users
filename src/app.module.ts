@@ -10,6 +10,7 @@ import { EnvValidationSchema, formatEnvErrors } from './config/env-validation.co
 import { MikroOrmContextInterceptor } from './interceptors/mikro-orm-context.interceptor';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { AppErrorHttpFilter } from './filters/app-error-http.filter';
+import { RpcExceptionHttpFilter } from './filters/rpc-exception-http.filter';
 
 @Module({
   imports: [
@@ -46,6 +47,10 @@ import { AppErrorHttpFilter } from './filters/app-error-http.filter';
       provide: APP_FILTER, 
       useClass: AppErrorHttpFilter, 
     },
+    {
+      provide: APP_FILTER,
+      useClass: RpcExceptionHttpFilter,
+    }
   ],
 })
 export class AppModule implements NestModule {

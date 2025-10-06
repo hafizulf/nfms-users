@@ -34,4 +34,11 @@ export class UserMapper {
     dto.updated_at = d.updatedAt.toISOString();
     return dto;
   }
+
+  static toOrmPartial(domainUser: Partial<UserEntity>): Partial<UserOrmEntity> {
+    return {
+      name: domainUser.name,
+      email: domainUser.email,
+    };
+  }
 }

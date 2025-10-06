@@ -7,7 +7,7 @@ import { UserRepositoryMikro } from 'src/modules/users/infrastucture/persistence
 import { UserRpcService } from './application/services/user-rpc.service';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { UserOrmEntity } from 'src/modules/users/infrastucture/persistence/mikro/user.orm-entity';
-import { UserController } from './interface/user-http.controller';
+import { UserHttpController } from './interface/user-http.controller';
 import { UserService } from './application/services/user.service';
 import { UserHandlers } from './application/handlers';
 import { CqrsModule } from '@nestjs/cqrs';
@@ -21,7 +21,7 @@ import { SecurityModule } from '../common/security/security.module';
   ],
   controllers: [
     UserRpcController,
-    UserController,
+    UserHttpController,
   ],
   providers: [
     {

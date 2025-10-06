@@ -1,4 +1,5 @@
-import { IsString, IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { IsString, IsEmail, IsNotEmpty, MinLength, IsUUID, IsOptional } from 'class-validator';
+import { AtLeastOneProperty } from '../../../common/decorators/at-least-one-property.decorator';
 
 export class UserResponseDto {
   @IsString()
@@ -36,4 +37,26 @@ export class CreateUserRequest {
   @IsNotEmpty()
   @MinLength(6, { message: 'Password must be at least 6 characters long' })
   password: string;
+}
+
+export class FindOneUserRequest {
+  @IsUUID('7', { message: "Id must be a valid uuid" })
+  id!: string;
+}
+
+export class FindOneUserResponse {
+  user: UserResponseDto;
+}
+
+export class UpdateUserRequest {
+  @IsOptional()
+  @IsString()
+  name: string;
+
+  @IsOptional()
+  @IsEmail()
+  email: string;
+
+  @AtLeastOneProperty(['name', 'email'])
+  _validateAtLeastOne?: never;
 }
