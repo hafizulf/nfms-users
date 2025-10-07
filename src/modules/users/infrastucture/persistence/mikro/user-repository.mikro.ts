@@ -101,4 +101,9 @@ export class UserRepositoryMikro implements UserRepository {
 
     return deleted;
   }
+
+  async findByEmail(email: string): Promise<UserEntity | null> {
+    const ormUser = await this.userRepository.findOne({ email }, { filters: { softDeleted: true } });
+    return ormUser ? UserMapper.toDomain(ormUser) : null;
+  }
 }

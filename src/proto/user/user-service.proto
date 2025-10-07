@@ -8,8 +8,12 @@ message Empty {}
 message FindOneUserRequest {
   string id = 1;
 }
+message FindUserByEmailRequest {
+  string email = 1;
+}
 
 service UserService {
   rpc FindUsers(Empty) returns (FindUsersResponse) {}
   rpc FindOneUser(FindOneUserRequest) returns (FindOneUserResponse) {}
+  rpc FindUserByEmail(FindUserByEmailRequest) returns (FindUserByEmailResponse) {}
 }

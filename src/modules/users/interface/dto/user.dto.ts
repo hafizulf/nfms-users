@@ -60,3 +60,12 @@ export class UpdateUserRequest {
   @AtLeastOneProperty(['name', 'email'])
   _validateAtLeastOne?: never;
 }
+
+export class FindUserByEmailRequest {
+  @IsEmail()
+  email: string;
+}
+
+export class FindUserByEmailResponse {
+  user: UserResponseDto;
+}

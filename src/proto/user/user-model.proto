@@ -17,3 +17,7 @@ message FindUsersResponse {
 message FindOneUserResponse {
   UserPublic user = 1;
 }
+
+message FindUserByEmailResponse {
+  UserPublic user = 1;
+}
