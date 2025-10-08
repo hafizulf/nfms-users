@@ -1,33 +1,17 @@
+import { ServiceError, status } from '@grpc/grpc-js';
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
-import { FastifyReply } from 'fastify';
+import { throwError } from 'rxjs';
 
 @Catch(RpcException)
 export class RpcExceptionHttpFilter implements ExceptionFilter {
   catch(exception: RpcException, host: ArgumentsHost) {
-    const reply = host.switchToHttp().getResponse<FastifyReply>();
-    const error = exception.getError() as { code?: number; message?: string; details?: string };
-
-    let statusCode: number;
-    switch(error.code) {
-      case 3: {
-        statusCode = 400;
-        break;
-      }
-      case 5: {
-        statusCode = 404;
-        break;
-      }
-      default: {
-        statusCode = 500;
-      }
+    const error = exception.getError();
+    if (typeof error === 'object' && error && 'code' in (error as any)) {
+      const e = error as Partial<ServiceError> & { details?: string };
+      return throwError(() => ({ code: e.code ?? status.UNKNOWN, details: e.details ?? 'Error' }));
     }
-    const message = error.message || 'Internal server error';
-    
-    reply.code(statusCode).send({
-      statusCode,
-      message,
-      errors: error.details ? JSON.parse(error.details) : undefined,
-    });
+    const details = typeof error === 'string' ? error : 'Error';
+    return throwError(() => ({ code: status.UNKNOWN, details }));
   }
 }

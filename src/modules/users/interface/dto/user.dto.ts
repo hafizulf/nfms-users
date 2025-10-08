@@ -69,3 +69,19 @@ export class FindUserByEmailRequest {
 export class FindUserByEmailResponse {
   user: UserResponseDto;
 }
+
+export class VerifyCredentialsRequest {
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  password: string;
+}
+
+export class Sub {
+  sub: string;
+}
+
+export class VerifyCredentialsResponse {
+  user: Sub;
+}

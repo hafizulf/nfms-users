@@ -21,3 +21,11 @@ message FindOneUserResponse {
 message FindUserByEmailResponse {
   UserPublic user = 1;
 }
+
+message PayloadCredentials {
+  string sub = 1;
+}
+
+message VerifyCredentialsResponse {
+  PayloadCredentials user = 1;
+}
