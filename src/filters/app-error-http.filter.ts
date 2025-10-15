@@ -1,17 +1,21 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
-import { AppError } from '../modules/common/errors/app-error';
+import { Catch, ExceptionFilter, ArgumentsHost, HttpStatus } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
+import { AppError } from 'src/modules/common/errors/app-error';
 
 @Catch(AppError)
 export class AppErrorHttpFilter implements ExceptionFilter {
-  catch(err: AppError, host: ArgumentsHost) {
-    const reply = host.switchToHttp().getResponse<FastifyReply>();
-    const status = err.httpStatus;
-    
-    reply.code(status).send({
-      statusCode: status,
-      code: err.code,
-      message: err.message,
-    });
+  catch(exception: AppError, host: ArgumentsHost) {
+    const type = host.getType();
+
+    if (type === 'http') {
+      const reply = host.switchToHttp().getResponse<FastifyReply>();
+      const status = exception.httpStatus;
+
+      reply.code(status).send({
+        statusCode: status,
+        code: exception.code,
+        message: exception.message,
+      });
+    }
   }
 }

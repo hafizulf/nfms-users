@@ -16,9 +16,16 @@ message VerifyCredentialsRequest {
   string password = 2;
 }
 
+message RegisterUserRequest {
+  string name = 1;
+  string email = 2;
+  string password = 3;
+}
+
 service UserService {
   rpc FindUsers(Empty) returns (FindUsersResponse) {}
   rpc FindOneUser(FindOneUserRequest) returns (FindOneUserResponse) {}
   rpc FindUserByEmail(FindUserByEmailRequest) returns (FindUserByEmailResponse) {}
   rpc VerifyCredentials(VerifyCredentialsRequest) returns (VerifyCredentialsResponse) {}
+  rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse) {}
 }

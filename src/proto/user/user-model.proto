@@ -29,3 +29,7 @@ message PayloadCredentials {
 message VerifyCredentialsResponse {
   PayloadCredentials user = 1;
 }
+
+message RegisterUserResponse {
+  UserPublic user = 1;
+}

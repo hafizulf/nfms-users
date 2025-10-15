@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
@@ -9,8 +9,6 @@ import { mikroOrmConfig } from './config/mikro-orm.config';
 import { EnvValidationSchema, formatEnvErrors } from './config/env-validation.config';
 import { MikroOrmContextInterceptor } from './interceptors/mikro-orm-context.interceptor';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
-import { AppErrorHttpFilter } from './filters/app-error-http.filter';
-import { RpcExceptionHttpFilter } from './filters/rpc-exception-http.filter';
 
 @Module({
   imports: [
@@ -43,14 +41,6 @@ import { RpcExceptionHttpFilter } from './filters/rpc-exception-http.filter';
       provide: APP_INTERCEPTOR,
       useClass: MikroOrmContextInterceptor,
     },
-    { 
-      provide: APP_FILTER, 
-      useClass: AppErrorHttpFilter, 
-    },
-    {
-      provide: APP_FILTER,
-      useClass: RpcExceptionHttpFilter,
-    }
   ],
 })
 export class AppModule implements NestModule {
