@@ -8,6 +8,7 @@ import {
   FindUserByEmailRequest, 
   FindUsersRequest, 
   FindUsersResponse, 
+  MarkEmailAsVerifiedRequest, 
   VerifyCredentialsRequest, 
   VerifyCredentialsResponse 
 } from './dto/user.dto';
@@ -70,6 +71,15 @@ export class UserRpcController {
     @Payload() request: CreateUserRequest,
   ): Promise<FindOneUserResponse> {
     const user = await this.userService.createUser(request);
+    return { user };
+  }
+
+  @GrpcMethod('UserService', 'MarkEmailAsVerified')
+  @UsePipes(buildGrpcValidationPipe())
+  async markEmailAsVerified(
+    @Payload() payload: MarkEmailAsVerifiedRequest,
+  ): Promise<FindOneUserResponse> {
+    const user = await this.userRpcService.markEmailAsVerified(payload.user_id);
     return { user };
   }
 }

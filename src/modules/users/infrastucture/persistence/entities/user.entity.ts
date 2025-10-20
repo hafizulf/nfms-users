@@ -6,6 +6,8 @@ export class UserEntity {
     private _name: string,
     private _email: string,
     passwordHash: string,
+    private _is_email_verified: boolean = false,
+    private _email_verified_at: Date | null = null,
     private _createdAt: Date,
     private _updatedAt: Date,
   ) {
@@ -17,9 +19,11 @@ export class UserEntity {
     name: string,
     email: string,
     passwordHash: string,
+    is_email_verified: boolean = false,
+    email_verified_at: Date | null = null,
     now = new Date(),
   ) {
-    return new UserEntity(id, name, email, passwordHash, now, now);
+    return new UserEntity(id, name, email, passwordHash, is_email_verified, email_verified_at, now, now);
   }
 
   // Rehydrate from persistence
@@ -28,15 +32,19 @@ export class UserEntity {
     name: string,
     email: string,
     passwordHash: string,
+    is_email_verified: boolean = false,
+    email_verified_at: Date | null = null,
     createdAt: Date,
     updatedAt: Date,
   ) {
-    return new UserEntity(id, name, email, passwordHash, createdAt, updatedAt);
+    return new UserEntity(id, name, email, passwordHash, is_email_verified, email_verified_at, createdAt, updatedAt);
   }
 
   // Getters (expose safely)
   get name() { return this._name; }
   get email() { return this._email; }
+  get is_email_verified() { return this._is_email_verified; }
+  get email_verified_at() { return this._email_verified_at; }
   get createdAt() { return this._createdAt; }
   get updatedAt() { return this._updatedAt; }
 

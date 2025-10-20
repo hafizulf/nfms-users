@@ -1,6 +1,5 @@
-import { Entity, Filter, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, PrimaryKey, Property, Filter } from '@mikro-orm/core';
 
-@Entity()
 @Filter({
   name: 'softDeleted',
   cond: () => ({ deletedAt: null }),
@@ -20,11 +19,17 @@ export class UserOrmEntity {
   @Property({ fieldName: 'password_hash', hidden: true })
   passwordHash!: string;
 
-  @Property({ 
-    fieldName: 'created_at', 
-    type: 'timestamptz', 
-    defaultRaw: 'now()' 
+  @Property({ fieldName: 'is_email_verified', type: 'boolean', default: false })
+  is_email_verified: boolean = false;
+
+  @Property({
+    fieldName: 'email_verified_at',
+    type: 'timestamptz',
+    nullable: true,
   })
+  email_verified_at?: Date | null = null;
+
+  @Property({ fieldName: 'created_at', type: 'timestamptz', defaultRaw: 'now()' })
   createdAt!: Date;
 
   @Property({
@@ -35,10 +40,6 @@ export class UserOrmEntity {
   })
   updatedAt!: Date;
 
-  @Property({ 
-    fieldName: 'deleted_at', 
-    type: 'timestamptz', 
-    nullable: true 
-  })
+  @Property({ fieldName: 'deleted_at', type: 'timestamptz', nullable: true })
   deletedAt?: Date | null;
 }

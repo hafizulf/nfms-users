@@ -22,10 +22,15 @@ message RegisterUserRequest {
   string password = 3;
 }
 
+message MarkEmailAsVerifiedRequest {
+  string user_id = 1;
+}
+
 service UserService {
   rpc FindUsers(Empty) returns (FindUsersResponse) {}
   rpc FindOneUser(FindOneUserRequest) returns (FindOneUserResponse) {}
   rpc FindUserByEmail(FindUserByEmailRequest) returns (FindUserByEmailResponse) {}
   rpc VerifyCredentials(VerifyCredentialsRequest) returns (VerifyCredentialsResponse) {}
   rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse) {}
+  rpc MarkEmailAsVerified(MarkEmailAsVerifiedRequest) returns (MarkEmailAsVerifiedResponse) {}
 }

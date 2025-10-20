@@ -22,6 +22,9 @@ async function bootstrap() {
       package: 'user',
       protoPath: join(__dirname, './proto/user/user.proto'),
       url: grpcUrl,
+      loader: {
+        keepCase: true,
+      }
     },
   });
 

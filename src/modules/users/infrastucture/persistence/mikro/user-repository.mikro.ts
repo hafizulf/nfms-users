@@ -106,4 +106,17 @@ export class UserRepositoryMikro implements UserRepository {
     const ormUser = await this.userRepository.findOne({ email }, { filters: { softDeleted: true } });
     return ormUser ? UserMapper.toDomain(ormUser) : null;
   }
+
+  async markEmailAsVerified(email: string): Promise<UserEntity | null> {
+    const ormUser = await this.userRepository.findOne({ email }, { filters: { softDeleted: true } });
+    if (!ormUser) {
+      return null;
+    }
+    ormUser.is_email_verified = true;
+    ormUser.email_verified_at = new Date();
+
+    await this.userRepository.getEntityManager().persistAndFlush(ormUser);
+
+    return UserMapper.toDomain(ormUser);
+  }
 }

@@ -1,4 +1,4 @@
-import { IsString, IsEmail, IsNotEmpty, MinLength, IsUUID, IsOptional } from 'class-validator';
+import { IsString, IsEmail, IsNotEmpty, MinLength, IsUUID, IsOptional, IsBoolean } from 'class-validator';
 import { AtLeastOneProperty } from '../../../common/decorators/at-least-one-property.decorator';
 
 export class UserResponseDto {
@@ -10,6 +10,10 @@ export class UserResponseDto {
 
   @IsEmail()
   email: string;
+
+  @IsBoolean()
+  @IsOptional()
+  is_email_verified: boolean | null;
 
   @IsString()
   created_at: string;
@@ -85,3 +89,9 @@ export class Sub {
 export class VerifyCredentialsResponse {
   user: Sub;
 }
+
+export class MarkEmailAsVerifiedRequest {
+  @IsUUID('7', { message: "Id must be a valid uuid" })
+  user_id!: string;
+}
+

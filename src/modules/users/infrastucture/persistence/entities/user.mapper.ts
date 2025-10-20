@@ -9,6 +9,8 @@ export class UserMapper {
       e.name,
       e.email,
       e.passwordHash,
+      e.is_email_verified,
+      e.email_verified_at,
       e.createdAt,
       e.updatedAt,
     );
@@ -20,6 +22,8 @@ export class UserMapper {
     e.name = d.name;
     e.email = d.email;
     e.passwordHash = d.passwordHash;
+    e.is_email_verified = d.is_email_verified;
+    e.email_verified_at = d.email_verified_at;
     e.createdAt = d.createdAt;
     e.updatedAt = d.updatedAt;
     return e;
@@ -30,6 +34,7 @@ export class UserMapper {
     dto.id = d.id;
     dto.name = d.name;
     dto.email = d.email;
+    dto.is_email_verified = d.is_email_verified;
     dto.created_at = d.createdAt.toISOString();
     dto.updated_at = d.updatedAt.toISOString();
     return dto;
