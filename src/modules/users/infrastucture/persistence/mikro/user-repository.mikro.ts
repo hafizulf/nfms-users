@@ -119,4 +119,16 @@ export class UserRepositoryMikro implements UserRepository {
 
     return UserMapper.toDomain(ormUser);
   }
+
+  async resetPassword(user_id: string, passwordHash: string): Promise<UserEntity | null> {
+    const ormUser = await this.userRepository.findOne({ id: user_id }, { filters: { softDeleted: true } });
+    if (!ormUser) {
+      return null;
+    }
+    ormUser.passwordHash = passwordHash;
+
+    await this.userRepository.getEntityManager().persistAndFlush(ormUser);
+
+    return UserMapper.toDomain(ormUser);
+  }
 }

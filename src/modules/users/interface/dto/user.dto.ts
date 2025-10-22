@@ -95,3 +95,10 @@ export class MarkEmailAsVerifiedRequest {
   user_id!: string;
 }
 
+export class ResetPasswordRequest {
+  @IsUUID('7', { message: "Id must be a valid uuid" })
+  user_id!: string;
+
+  @IsString()
+  password: string;
+}

@@ -8,4 +8,5 @@ export abstract class UserRepository {
   abstract softDelete(id: string): Promise<boolean>;
   abstract findByEmail(email: string): Promise<UserEntity | null>;
   abstract markEmailAsVerified(email: string): Promise<UserEntity | null>;
+  abstract resetPassword(user_id: string, passwordHash: string): Promise<UserEntity | null>;
 }

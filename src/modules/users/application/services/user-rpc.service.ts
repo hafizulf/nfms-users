@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UserEntity } from 'src/modules/users/infrastucture/persistence/entities/user.entity';
-import { FindOneUserRequest, FindUserByEmailRequest, FindUsersRequest, Sub, UserResponseDto, VerifyCredentialsRequest } from "src/modules/users/interface/dto/user.dto";
+import { FindOneUserRequest, FindUserByEmailRequest, FindUsersRequest, ResetPasswordRequest, Sub, UserResponseDto, VerifyCredentialsRequest } from "src/modules/users/interface/dto/user.dto";
 import { FindUsersQuery } from '../query/find-users.query';
 import { UserViewMapper } from '../../interface/mapper/user-view.mapper';
 import { FindOneUserQuery } from '../query/find-one-user.query';
@@ -12,6 +12,7 @@ import { SECURITY_TOKENS } from 'src/modules/common/security/tokens';
 import { PasswordHasher } from 'src/modules/common/security/password-hasher.port';
 import { UserNotFoundError } from '../errors/user.error';
 import { MarkEmailAsVerifiedCommand } from '../command/mark-email-as-verified.command';
+import { ResetPasswordCommand } from '../command/reset-password.command';
 
 @Injectable()
 export class UserRpcService {
@@ -73,6 +74,20 @@ export class UserRpcService {
 
     const updated = await this._commandBus.execute(
       new MarkEmailAsVerifiedCommand(user._email),
+    );
+
+    return UserViewMapper.toResponseDto(updated);
+  }
+
+  async resetPassword({ user_id, password }: ResetPasswordRequest): Promise<UserResponseDto> {
+    const user = await this._queryBus.execute(
+      new FindOneUserQuery(user_id),
+    )
+
+    if(!user) throw new UserNotFoundError(user_id);
+
+    const updated = await this._commandBus.execute(
+      new ResetPasswordCommand(user_id, password),
     );
 
     return UserViewMapper.toResponseDto(updated);
