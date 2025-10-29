@@ -1,5 +1,6 @@
 import { IsString, IsEmail, IsNotEmpty, MinLength, IsUUID, IsOptional, IsBoolean } from 'class-validator';
 import { AtLeastOneProperty } from '../../../common/decorators/at-least-one-property.decorator';
+import { File } from '@nest-lab/fastify-multer';
 
 export class UserResponseDto {
   @IsString()
@@ -101,4 +102,9 @@ export class ResetPasswordRequest {
 
   @IsString()
   password: string;
+}
+
+export class UpdateUserImageRequest {
+  user_id!: string;
+  image!: File;
 }

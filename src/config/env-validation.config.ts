@@ -18,6 +18,7 @@ export const EnvValidationSchema = z.object({
   DB_USER: z.string(),
   DB_PASSWORD: z.string(),
   DB_DATABASE: z.string(),
+  UPLOADS_GRPC_URL: z.string(),
 });
 
 export type Env = z.infer<typeof EnvValidationSchema>;

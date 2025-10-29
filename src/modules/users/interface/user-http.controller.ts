@@ -1,15 +1,36 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
+import { 
+  Body, 
+  Controller, 
+  Delete, 
+  Get, 
+  Logger, 
+  Param, 
+  Patch, 
+  Post, 
+  UploadedFile, 
+  UseFilters, 
+  UseInterceptors 
+} from "@nestjs/common";
 import { UserRpcService } from "../application/services/user-rpc.service";
 import { CreateUserRequest, FindOneUserRequest, UpdateUserRequest, UserResponseDto } from "./dto/user.dto";
 import { StandardResponseDto } from "../../common/dto/standard-response.dto";
 import { UserService } from "../application/services/user.service";
+import { FileUploadInterceptor } from "src/interceptors/file-upload.interceptor";
+import type { File } from '@nest-lab/fastify-multer';
+import { FileRequiredPipe } from "src/pipes/file-required.pipe";
+import { GrpcToHttpFilter } from "src/filters/grpc-to-http.filter";
 
 @Controller('/users')
+@UseFilters(GrpcToHttpFilter)
 export class UserHttpController {
+  private readonly logger: Logger;
+
   constructor(
     private readonly _userRpcService: UserRpcService,
     private readonly _userService: UserService,
-  ) {}
+  ) {
+    this.logger = new Logger(UserHttpController.name);
+  }
 
   @Get()
   async findUsers(): Promise<StandardResponseDto<UserResponseDto[]>> {
@@ -73,5 +94,32 @@ export class UserHttpController {
       statusCode: 200,
       message: 'User deleted successfully',
     } 
+  }
+
+  @Patch(':id/image')
+  @UseInterceptors(
+    new FileUploadInterceptor({
+      fieldName: 'image',
+      maxSizeInMB: 2,
+      allowedMimeTypes: ['image/jpeg', 'image/png'],
+      destination: 'images',
+    }),
+  )
+  async updateUserImage(
+    @Param() params: FindOneUserRequest,
+    @UploadedFile(new FileRequiredPipe('image')) image: File,
+  ): Promise<StandardResponseDto<UserResponseDto>> {
+    const user_id = params.id;
+
+    await this._userService.updateUserImage({
+      user_id,
+      image,
+    });
+
+    return {
+      statusCode: 200,
+      message: 'User image uploaded.',
+      // data: await this.userService.findOne(id),
+    };
   }
 }

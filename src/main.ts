@@ -5,6 +5,9 @@ import { join } from 'path';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';import { buildHttpValidationPipe } from './modules/common/validation/build-validation-pipe';
 import { AppErrorHttpFilter } from './filters/app-error-http.filter';
+import fastifyMultipart from '@fastify/multipart';
+import { MAX_IMAGE_BYTES } from './modules/common/const/file.const';
+
 async function bootstrap() {
   // Create main Fastify HTTP app
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -25,6 +28,12 @@ async function bootstrap() {
       loader: {
         keepCase: true,
       }
+    },
+  });
+
+  await app.register(fastifyMultipart, {
+    limits: {
+      fileSize: MAX_IMAGE_BYTES,
     },
   });
 

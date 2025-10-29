@@ -12,12 +12,14 @@ import { UserService } from './application/services/user.service';
 import { UserHandlers } from './application/handlers';
 import { CqrsModule } from '@nestjs/cqrs';
 import { SecurityModule } from '../common/security/security.module';
+import { UploadsGrpcModule } from '../uploads-grpc/upload-grpc.module';
 
 @Module({
   imports: [
     MikroOrmModule.forFeature([UserOrmEntity]),
     SecurityModule,
     CqrsModule,
+    UploadsGrpcModule,
   ],
   controllers: [
     UserRpcController,
