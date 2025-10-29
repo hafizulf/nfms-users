@@ -108,3 +108,8 @@ export class UpdateUserImageRequest {
   user_id!: string;
   image!: File;
 }
+
+export class UpdateUserImageResponse {
+  user_id: string;
+  image_url: string;
+}

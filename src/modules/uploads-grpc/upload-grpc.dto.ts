@@ -29,6 +29,6 @@ export class UploadUserImageRequest {
 
 export class UploadUserImageResponse {
   user_id: string;
-  image_url: string;
-  trace_id: string;
+  url: string;
+  checksum: string;
 }

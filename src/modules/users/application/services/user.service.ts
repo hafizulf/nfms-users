@@ -3,6 +3,7 @@ import {
   CreateUserRequest, 
   FindOneUserRequest, 
   UpdateUserImageRequest, 
+  UpdateUserImageResponse, 
   UpdateUserRequest, 
   UserResponseDto 
 } from "../../interface/dto/user.dto";
@@ -61,7 +62,7 @@ export class UserService {
 
   async updateUserImage(
     data: UpdateUserImageRequest,
-  ): Promise<void> {
+  ): Promise<UpdateUserImageResponse> {
     const { user_id, image } = data;
     const userData = await this.queryBus.execute(
       new FindOneUserQuery(user_id),
@@ -70,6 +71,7 @@ export class UserService {
     
     const { originalname, mimetype, size, buffer } = image;
     const fileName = `${randomUUID()}-${originalname}`;
+    const traceId = randomUUID();
     
     // TODO: sending chunks
     const uploadedImage = await this.uploadGrpcService.uploadUserImage({
@@ -78,11 +80,15 @@ export class UserService {
       filename: fileName,
       mime_type: mimetype,
       size: size!,
-      trace_id: randomUUID(),
+      trace_id: traceId,
     });
 
 
-    // TODO: response from gRPC
+    // TODO: log response from gRPC
     console.log("uploaded image", uploadedImage);
+    return {
+      user_id,
+      image_url: uploadedImage.url,
+    }
   }
 }
