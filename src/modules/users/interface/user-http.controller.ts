@@ -17,7 +17,7 @@ import { StandardResponseDto } from "../../common/dto/standard-response.dto";
 import { UserService } from "../application/services/user.service";
 import { FileUploadInterceptor } from "src/interceptors/file-upload.interceptor";
 import type { File } from '@nest-lab/fastify-multer';
-import { FileRequiredPipe } from "src/pipes/file-required.pipe";
+import { FileImagePipe } from "src/pipes/file-image.pipe";
 import { GrpcToHttpFilter } from "src/filters/grpc-to-http.filter";
 
 @Controller('/users')
@@ -100,14 +100,13 @@ export class UserHttpController {
   @UseInterceptors(
     new FileUploadInterceptor({
       fieldName: 'image',
-      maxSizeInMB: 2,
+      maxSizeInMB: 1,
       allowedMimeTypes: ['image/jpeg', 'image/png'],
-      destination: 'images',
     }),
   )
   async updateUserImage(
     @Param() params: FindOneUserRequest,
-    @UploadedFile(new FileRequiredPipe('image')) image: File,
+    @UploadedFile(new FileImagePipe([ 'image/png', 'image/jpeg'], true)) image: File,
   ): Promise<StandardResponseDto<UpdateUserImageResponse>> {
     const user_id = params.id;
     const data = await this._userService.updateUserImage({
