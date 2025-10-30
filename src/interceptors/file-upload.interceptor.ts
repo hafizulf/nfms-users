@@ -1,5 +1,4 @@
 import { 
-  BadRequestException, 
   CallHandler,
   ExecutionContext, 
   Injectable,
@@ -7,11 +6,7 @@ import {
 } from "@nestjs/common";
 import { Observable } from "rxjs";
 import { memoryStorage } from 'fastify-multer';
-import {
-  File,
-  FileFilterCallback,
-  FileInterceptor,
-} from '@nest-lab/fastify-multer';
+import { FileInterceptor } from '@nest-lab/fastify-multer';
 
 interface FileUploadInterceptorOptions {
   fieldName: string;

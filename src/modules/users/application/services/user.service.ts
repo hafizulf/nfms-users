@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { 
   CreateUserRequest, 
   FindOneUserRequest, 
@@ -71,7 +71,6 @@ export class UserService {
     
     const { originalname, mimetype, size, buffer } = image;
     const fileName = `${randomUUID()}-${originalname}`;
-    const traceId = randomUUID();
     
     // TODO: sending chunks
     const uploadedImage = await this.uploadGrpcService.uploadUserImage({
@@ -80,12 +79,12 @@ export class UserService {
       filename: fileName,
       mime_type: mimetype,
       size: size!,
-      trace_id: traceId,
     });
 
+    Logger.log(
+      `User image uploaded. user_id: ${user_id}, image_url: ${uploadedImage.url}`,
+    )
 
-    // TODO: log response from gRPC
-    console.log("uploaded image", uploadedImage);
     return {
       user_id,
       image_url: uploadedImage.url,

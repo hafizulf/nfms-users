@@ -21,14 +21,11 @@ export class UploadUserImageRequest {
   @IsInt()
   @Min(0)
   size!: number;
-
-  @IsNotEmpty()
-  @IsString()
-  trace_id!: string;
 }
 
 export class UploadUserImageResponse {
   user_id: string;
+  object_key: string;
   url: string;
-  checksum: string;
+  created_at: number;
 }
