@@ -7,7 +7,7 @@ import {
 import { FastifyReply } from 'fastify';
 import { ServiceError, status } from '@grpc/grpc-js';
 import { AppError } from 'src/modules/common/errors/app-error';
-import { BadGatewayException, BadRequestException, GatewayTimeoutException, NotFoundException, ServiceUnavailableException } from 'src/exceptions/common.exception';
+import { BadGatewayException, BadRequestException, ForbiddenException, GatewayTimeoutException, NotFoundException, ServiceUnavailableException } from 'src/exceptions/common.exception';
 
 @Catch(Error)
 export class GrpcToHttpFilter implements ExceptionFilter {
@@ -47,6 +47,9 @@ export class GrpcToHttpFilter implements ExceptionFilter {
     switch (err.code) {
       case status.INVALID_ARGUMENT:
         return new BadRequestException(msg ?? 'Invalid request');
+
+      case status.PERMISSION_DENIED:
+        return new ForbiddenException(msg ?? 'Permission denied');
 
       case status.NOT_FOUND:
         return new NotFoundException(msg ?? 'Not found');

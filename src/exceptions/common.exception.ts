@@ -37,3 +37,9 @@ export class NotFoundException extends AppError {
     super(COMMON_ERROR_CODES.NOT_FOUND, message, HttpStatus.NOT_FOUND);
   }
 }
+
+export class ForbiddenException extends AppError {
+  constructor(message: string) {
+    super(COMMON_ERROR_CODES.FORBIDDEN, message, HttpStatus.FORBIDDEN);
+  }
+}

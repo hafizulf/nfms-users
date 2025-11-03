@@ -19,6 +19,7 @@ import { UploadGrpcService } from "src/modules/uploads-grpc/upload-grpc.service"
 import { randomUUID } from "crypto";
 import { UpdateUserImageCommand } from "../command/update-user-image.command";
 import { UserEntity } from "../../infrastucture/persistence/entities/user.entity";
+import { ForbiddenException } from "src/exceptions/common.exception";
 
 @Injectable()
 export class UserService {
@@ -119,5 +120,46 @@ export class UserService {
     });
 
     return { user_id, image_url: image.url };
+  }
+
+  async deleteUserImage(user_id: string): Promise<void> {
+    const user: UserEntity | null = await this.queryBus.execute(new FindOneUserQuery(user_id));
+    if (!user) throw new UserNotFoundError(user_id);
+
+    const key = user.avatar_path ?? null;
+    if (!key) throw new ImageNotFoundError(user_id);
+    if (!key.startsWith(`users/${user_id}/`)) {
+      throw new ForbiddenException('object_key does not belong to this user');
+    }
+
+    // 1) Delete from DB
+    try {
+      await this.commandBus.execute(
+        new UpdateUserImageCommand(user_id, null), // set avatar_path = null
+      );
+    } catch (dbErr) {
+      throw dbErr;
+    }
+
+    // 2) Delete from S3 via upload service
+    try {
+      await this.uploadGrpcService.deleteUserImage({
+        user_id,
+        object_key: key,
+      });
+    } catch (s3Err) {
+      try {
+        await this.commandBus.execute(
+          new UpdateUserImageCommand(user_id, key),
+        );
+      } catch (revertErr) {
+        Logger.error(
+          `[deleteUserImage] Revert failed for user=${user_id} key=${key}: ${String(revertErr?.message ?? revertErr)}`
+        );
+      }
+      throw s3Err;
+    }
+
+    Logger.log(`[deleteUserImage] user_id=${user_id} deleted key=${key}`);
   }
 }

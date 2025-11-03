@@ -133,4 +133,16 @@ export class UserHttpController {
       data,
     }
   }
+
+  @Delete(':id/image')
+  async deleteUserImage(
+    @Param() param: FindOneUserRequest,
+  ): Promise<StandardResponseDto<void>> {
+    const data = await this._userService.deleteUserImage(param.id);
+    
+    return {
+      statusCode: 200,
+      message: 'User image deleted successfully',
+    }
+  }
 }

@@ -132,7 +132,7 @@ export class UserRepositoryMikro implements UserRepository {
     return UserMapper.toDomain(ormUser);
   }
 
-  async updateAvatarPath(user_id: string, avatar_path: string): Promise<void> {
+  async updateAvatarPath(user_id: string, avatar_path: string | null): Promise<void> {
     const em = this.userRepository.getEntityManager();
     await em.transactional(async (tx) => {
       const user = await tx.findOne(UserOrmEntity, { id: user_id }, { filters: { softDeleted: true } });
