@@ -1,4 +1,4 @@
-import { EntityRepository, UniqueConstraintViolationException } from '@mikro-orm/postgresql';
+import { EntityRepository } from '@mikro-orm/postgresql';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { Injectable } from '@nestjs/common';
 import { UserOrmEntity } from './user.orm-entity';
@@ -130,5 +130,17 @@ export class UserRepositoryMikro implements UserRepository {
     await this.userRepository.getEntityManager().persistAndFlush(ormUser);
 
     return UserMapper.toDomain(ormUser);
+  }
+
+  async updateAvatarPath(user_id: string, avatar_path: string): Promise<void> {
+    const em = this.userRepository.getEntityManager();
+    await em.transactional(async (tx) => {
+      const user = await tx.findOne(UserOrmEntity, { id: user_id }, { filters: { softDeleted: true } });
+      if (!user) {
+        throw new Error(`User ${user_id} not found`);
+      }
+      user.avatar_path = avatar_path;
+      await tx.persistAndFlush(user);
+    });
   }
 }

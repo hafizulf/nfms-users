@@ -29,6 +29,9 @@ export class UserOrmEntity {
   })
   email_verified_at?: Date | null = null;
 
+  @Property({ nullable: true,  columnType: 'varchar(255)' })
+  avatar_path?: string | null;
+
   @Property({ fieldName: 'created_at', type: 'timestamptz', defaultRaw: 'now()' })
   createdAt!: Date;
 

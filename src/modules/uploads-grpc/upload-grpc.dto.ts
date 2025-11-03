@@ -29,3 +29,21 @@ export class UploadUserImageResponse {
   url: string;
   created_at: number;
 }
+
+export class DeleteUserImageRequest {
+  @IsNotEmpty()
+  @IsString()
+  user_id!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  object_key!: string;
+}
+
+export class DeleteUserImageResponse {
+  user_id: string;
+  object_key: string;
+  deleted: boolean;
+  deleted_at: number;
+}
+

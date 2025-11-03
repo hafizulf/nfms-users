@@ -9,4 +9,5 @@ export abstract class UserRepository {
   abstract findByEmail(email: string): Promise<UserEntity | null>;
   abstract markEmailAsVerified(email: string): Promise<UserEntity | null>;
   abstract resetPassword(user_id: string, passwordHash: string): Promise<UserEntity | null>;
+  abstract updateAvatarPath(user_id: string, avatar_path: string): Promise<void>;
 }

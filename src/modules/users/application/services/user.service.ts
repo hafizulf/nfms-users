@@ -16,6 +16,7 @@ import { DeleteUserCommand } from "../command/delete-user.command";
 import { FindOneUserQuery } from "../query/find-one-user.query";
 import { UploadGrpcService } from "src/modules/uploads-grpc/upload-grpc.service";
 import { randomUUID } from "crypto";
+import { UpdateUserImageCommand } from "../command/update-user-image.command";
 
 @Injectable()
 export class UserService {
@@ -60,20 +61,16 @@ export class UserService {
     return;
   }
 
-  async updateUserImage(
-    data: UpdateUserImageRequest,
-  ): Promise<UpdateUserImageResponse> {
+  async updateUserImage(data: UpdateUserImageRequest): Promise<UpdateUserImageResponse> {
     const { user_id, image } = data;
-    const userData = await this.queryBus.execute(
-      new FindOneUserQuery(user_id),
-    );
-    if (!userData) throw new UserNotFoundError(user_id);
-    
+    const user = await this.queryBus.execute(new FindOneUserQuery(user_id));
+    if (!user) throw new UserNotFoundError(user_id);
+
+    const oldKey = user.avatar_path as string | null;
     const { originalname, mimetype, size, buffer } = image;
     const fileName = `${randomUUID()}-${originalname}`;
-    
-    // TODO: sending chunks
-    const uploadedImage = await this.uploadGrpcService.uploadUserImage({
+
+    const uploaded = await this.uploadGrpcService.uploadUserImage({
       user_id,
       data: buffer!,
       filename: fileName,
@@ -81,13 +78,27 @@ export class UserService {
       size: size!,
     });
 
-    Logger.log(
-      `User image uploaded. user_id: ${user_id}, image_url: ${uploadedImage.url}`,
-    )
-
-    return {
-      user_id,
-      image_url: uploadedImage.url,
+    try {
+      await this.commandBus.execute(
+        new UpdateUserImageCommand(user_id, uploaded.object_key),
+      );
+    } catch (dbErr) {
+      this.uploadGrpcService.deleteUserImage?.({
+        user_id,
+        object_key: uploaded.object_key,
+      }).catch((e: any) =>
+        Logger.warn(`Compensation delete failed for ${uploaded.object_key}: ${e?.message}`),
+      );
+      throw dbErr;
     }
+
+    if (oldKey && oldKey !== uploaded.object_key) {
+      this.uploadGrpcService.deleteUserImage?.({ user_id, object_key: oldKey })
+        .catch((e: any) =>
+          Logger.warn(`Old avatar cleanup failed for ${oldKey}: ${e?.message}`),
+        );
+    }
+
+    return { user_id, image_url: uploaded.url };
   }
 }
