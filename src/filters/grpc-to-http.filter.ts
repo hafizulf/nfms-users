@@ -13,13 +13,25 @@ import { BadGatewayException, BadRequestException, GatewayTimeoutException, Serv
 export class GrpcToHttpFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
     if (!this.isGrpcError(exception)) throw exception;
+  
+    console.error('[HTTP filter] gRPC error', {
+      code: exception?.code,
+      message: exception?.message,
+      details: exception?.details,
+    });
 
     const res = host.switchToHttp().getResponse<FastifyReply>();
-
     const appErr = this.mapGrpcToAppException(exception as ServiceError);
-    const statusCode = (appErr as any)?.httpStatus ?? HttpStatus.BAD_GATEWAY;
-    const code = (appErr as any)?.code ?? 'GATEWAY.BAD_RESPONSE';
-    const message = (appErr as any)?.message ?? 'Unexpected upstream error';
+
+    const statusCode = appErr?.httpStatus ?? HttpStatus.BAD_GATEWAY;
+    const code = appErr?.code ?? 'UPSTREAM_ERROR';
+    const upstreamMsg =
+      typeof exception?.details === 'string' && exception.details.trim()
+        ? exception.details
+        : (typeof exception?.message === 'string' && exception.message.trim()
+            ? exception.message
+            : undefined);
+    const message = upstreamMsg ?? appErr?.message ?? 'Upstream error';
 
     res.status(statusCode).send({ statusCode, code, message });
   }
