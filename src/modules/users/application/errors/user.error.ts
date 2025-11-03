@@ -19,3 +19,9 @@ export class UserHasDependenciesError extends AppError {
     super(ERROR_CODES.USER_HAS_DEPENDENCIES, `User has dependencies: ${id}`, HttpStatus.CONFLICT);
   }
 }
+
+export class ImageNotFoundError extends AppError {
+  constructor(id: string) {
+    super(ERROR_CODES.USER_NOT_FOUND, `Image not found for user: ${id}`, HttpStatus.NOT_FOUND);
+  }
+}

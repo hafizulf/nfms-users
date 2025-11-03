@@ -8,6 +8,7 @@ export class UserViewMapper {
       name: user.name,
       email: user.email,
       is_email_verified: user.is_email_verified,
+      avatar_path: user.avatar_path,
       created_at: user.createdAt.toISOString(),
       updated_at: user.updatedAt.toISOString(),
     };

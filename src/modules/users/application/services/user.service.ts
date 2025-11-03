@@ -2,6 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { 
   CreateUserRequest, 
   FindOneUserRequest, 
+  FindUserImageResponse, 
   UpdateUserImageRequest, 
   UpdateUserImageResponse, 
   UpdateUserRequest, 
@@ -10,13 +11,14 @@ import {
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { CreateUserCommand } from "../command/create-user.command";
 import { UserViewMapper } from "../../interface/mapper/user-view.mapper";
-import { UserNotFoundError } from "../errors/user.error";
+import { ImageNotFoundError, UserNotFoundError } from "../errors/user.error";
 import { UpdateUserCommand } from "../command/update-user.command";
 import { DeleteUserCommand } from "../command/delete-user.command";
 import { FindOneUserQuery } from "../query/find-one-user.query";
 import { UploadGrpcService } from "src/modules/uploads-grpc/upload-grpc.service";
 import { randomUUID } from "crypto";
 import { UpdateUserImageCommand } from "../command/update-user-image.command";
+import { UserEntity } from "../../infrastucture/persistence/entities/user.entity";
 
 @Injectable()
 export class UserService {
@@ -100,5 +102,22 @@ export class UserService {
     }
 
     return { user_id, image_url: uploaded.url };
+  }
+
+  async findUserImage(user_id: string): Promise<FindUserImageResponse> {
+    const userData: UserEntity | null = await this.queryBus.execute(
+      new FindOneUserQuery(user_id),
+    )
+    if (!userData) throw new UserNotFoundError(user_id);
+    if (!userData.avatar_path) throw new ImageNotFoundError(user_id); 
+
+    const image = await this.uploadGrpcService.getUserImage({ 
+      user_id: userData.id,
+      object_key: userData.avatar_path,
+      inline: true,
+      expires_in: 900,
+    });
+
+    return { user_id, image_url: image.url };
   }
 }

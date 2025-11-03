@@ -8,6 +8,7 @@ export class UserEntity {
     passwordHash: string,
     private _is_email_verified: boolean = false,
     private _email_verified_at: Date | null = null,
+    private _avatar_path: string | null = null,
     private _createdAt: Date,
     private _updatedAt: Date,
   ) {
@@ -21,9 +22,10 @@ export class UserEntity {
     passwordHash: string,
     is_email_verified: boolean = false,
     email_verified_at: Date | null = null,
+    avatar_path: string | null = null,
     now = new Date(),
   ) {
-    return new UserEntity(id, name, email, passwordHash, is_email_verified, email_verified_at, now, now);
+    return new UserEntity(id, name, email, passwordHash, is_email_verified, email_verified_at, avatar_path, now, now);
   }
 
   // Rehydrate from persistence
@@ -34,10 +36,11 @@ export class UserEntity {
     passwordHash: string,
     is_email_verified: boolean = false,
     email_verified_at: Date | null = null,
+    avatar_path: string | null = null,
     createdAt: Date,
     updatedAt: Date,
   ) {
-    return new UserEntity(id, name, email, passwordHash, is_email_verified, email_verified_at, createdAt, updatedAt);
+    return new UserEntity(id, name, email, passwordHash, is_email_verified, email_verified_at, avatar_path, createdAt, updatedAt);
   }
 
   // Getters (expose safely)
@@ -45,6 +48,7 @@ export class UserEntity {
   get email() { return this._email; }
   get is_email_verified() { return this._is_email_verified; }
   get email_verified_at() { return this._email_verified_at; }
+  get avatar_path() { return this._avatar_path; }
   get createdAt() { return this._createdAt; }
   get updatedAt() { return this._updatedAt; }
 

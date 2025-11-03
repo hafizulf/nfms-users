@@ -1,4 +1,4 @@
-import { IsInstance, IsInt, IsMimeType, IsNotEmpty, IsString, Min } from "class-validator";
+import { IsBoolean, IsInstance, IsInt, IsMimeType, IsNotEmpty, IsString, Min } from "class-validator";
 
 export class UploadUserImageRequest {
   @IsNotEmpty()
@@ -47,3 +47,29 @@ export class DeleteUserImageResponse {
   deleted_at: number;
 }
 
+export class GetUserImageRequest {
+  @IsNotEmpty()
+  @IsString()
+  user_id!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  object_key!: string;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  inline!: boolean;
+
+  @IsNotEmpty()
+  @IsInt()
+  @Min(0)
+  expires_in!: number;
+}
+
+export class GetUserImageResponse {
+  user_id: string;
+  object_key: string;
+  url: string;
+  mime_type: string;
+  expires_at: number;
+}

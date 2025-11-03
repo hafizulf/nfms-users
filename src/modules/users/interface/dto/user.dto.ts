@@ -17,6 +17,10 @@ export class UserResponseDto {
   is_email_verified: boolean | null;
 
   @IsString()
+  @IsOptional()
+  avatar_path: string | null;
+
+  @IsString()
   created_at: string;
 
   @IsString()
@@ -113,3 +117,5 @@ export class UpdateUserImageResponse {
   user_id: string;
   image_url: string;
 }
+
+export class FindUserImageResponse extends UpdateUserImageResponse {}

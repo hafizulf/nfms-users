@@ -12,7 +12,7 @@ import {
   UseInterceptors 
 } from "@nestjs/common";
 import { UserRpcService } from "../application/services/user-rpc.service";
-import { CreateUserRequest, FindOneUserRequest, UpdateUserImageResponse, UpdateUserRequest, UserResponseDto } from "./dto/user.dto";
+import { CreateUserRequest, FindOneUserRequest, FindUserImageResponse, UpdateUserImageResponse, UpdateUserRequest, UserResponseDto } from "./dto/user.dto";
 import { StandardResponseDto } from "../../common/dto/standard-response.dto";
 import { UserService } from "../application/services/user.service";
 import { FileUploadInterceptor } from "src/interceptors/file-upload.interceptor";
@@ -119,5 +119,18 @@ export class UserHttpController {
       message: 'User image uploaded.',
       data,
     };
+  }
+
+  @Get(':id/image')
+  async findUserImage(
+    @Param() param: FindOneUserRequest,
+  ): Promise<StandardResponseDto<FindUserImageResponse>> {
+    const data = await this._userService.findUserImage(param.id);
+    
+    return {
+      statusCode: 200,
+      message: 'User image retrieved successfully',
+      data,
+    }
   }
 }
