@@ -9,6 +9,7 @@ import {
   Post, 
   UploadedFile, 
   UseFilters, 
+  UseGuards, 
   UseInterceptors 
 } from "@nestjs/common";
 import { UserRpcService } from "../application/services/user-rpc.service";
@@ -19,7 +20,9 @@ import { FileUploadInterceptor } from "src/interceptors/file-upload.interceptor"
 import type { File } from '@nest-lab/fastify-multer';
 import { FileImagePipe } from "src/pipes/file-image.pipe";
 import { GrpcToHttpFilter } from "src/filters/grpc-to-http.filter";
+import { AccessTokenGuard } from "src/modules/common/auth/access-token.guard";
 
+@UseGuards(AccessTokenGuard)
 @Controller('/users')
 @UseFilters(GrpcToHttpFilter)
 export class UserHttpController {

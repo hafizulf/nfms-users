@@ -9,6 +9,7 @@ import { mikroOrmConfig } from './config/mikro-orm.config';
 import { EnvValidationSchema, formatEnvErrors } from './config/env-validation.config';
 import { MikroOrmContextInterceptor } from './interceptors/mikro-orm-context.interceptor';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
+import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => mikroOrmConfig(config),
       inject: [ConfigService],
+      driver: PostgreSqlDriver,
     }),
     UsersModule,
   ],
